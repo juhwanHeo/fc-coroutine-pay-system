@@ -1,0 +1,15 @@
+spring:
+  r2dbc:
+    url: r2dbc:mysql://localhost:13306/test?useSSL=false&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    username: test
+    password: test123
+  application:
+    name: spring-webflux
+  output:
+    ansi:
+      enabled: always
+
+logging:
+  level:
+    com.fastcampus: debug
+    org.springframework.r2dbc.core: debug
