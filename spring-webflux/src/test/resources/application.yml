@@ -1,0 +1,12 @@
+spring:
+    name: spring-webflux
+    r2dbc:
+        url: r2dbc:pool:h2:mem://localhost/test
+    sql:
+        init:
+            mode: embedded
+            schema-locations: classpath:db-init/schema.sql
+logging:
+    level:
+        com.fastcampus: debug
+        org.springframework.r2dbc.core: debug

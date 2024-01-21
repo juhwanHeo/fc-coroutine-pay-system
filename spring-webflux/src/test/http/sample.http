@@ -1,0 +1,88 @@
+### Hello world
+GET http://localhost:8080/hello
+Content-Type: application/json
+
+### create #1
+POST http://localhost:8080/article
+Content-Type: application/json
+
+{
+  "title"    : "test 1",
+  "body"     : "demo 1",
+  "authorId" : 1234
+}
+
+### create #2
+POST http://localhost:8080/article
+Content-Type: application/json
+
+{
+  "title"    : "test 2",
+  "body"     : "demo 2",
+  "authorId" : 1234
+}
+
+### create #3
+POST http://localhost:8080/article
+Content-Type: application/json
+
+{
+  "title"    : "test 3",
+  "body"     : "demo 3",
+  "authorId" : 1234
+}
+
+### create (error)
+POST http://localhost:8080/article
+Content-Type: application/json
+
+{
+  "title"    : "error",
+  "body"     : "demo 3",
+  "authorId" : 1234
+}
+
+### update
+PUT http://localhost:8080/article/1
+Content-Type: application/json
+
+{
+  "authorId" : 99369
+}
+
+### update (error)
+PUT http://localhost:8080/article/-1
+Content-Type: application/json
+
+{
+  "authorId" : 99369
+}
+
+### get all
+GET http://localhost:8080/article
+Content-Type: application/json
+
+> {% client.test("size should be 3", function() {
+
+        client.log("Hello world !")
+        // client.log(JSON.stringify(response.body))
+        client.assert(response.status == 200)
+        client.assert(response.body.length >= 3)
+
+    });%}
+
+### get all by condition
+GET http://localhost:8080/article?title=2
+Content-Type: application/json
+
+### get
+GET http://localhost:8080/article/1
+Content-Type: application/json
+
+### get (error)
+GET http://localhost:8080/article/-1
+Content-Type: application/json
+
+### delete
+DELETE http://localhost:8080/article/1
+Content-Type: application/json
