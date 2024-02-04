@@ -26,3 +26,13 @@ logging:
     org.springframework.r2dbc.core: debug
     org.springframework.r2dbc.connection.init.ScriptUtils: debug
     dev.fastcampus: debug
+
+
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+  r2dbc:
+    url: r2dbc:pool:h2:mem://localhost/test
