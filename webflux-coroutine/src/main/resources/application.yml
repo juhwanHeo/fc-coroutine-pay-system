@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: spring-coroutine
+  output:
+    ansi:
+      enabled: always
+  r2dbc:
+    url: r2dbc:pool:mariadb://localhost:23306/test
+    username: test
+    password: test123
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db-init/schema.sql
+server:
+  shutdown: graceful
+  compression:
+    enabled: true
+  port: 8080
+  error:
+    include-message: always
+    include-exception: true
+    include-stacktrace: on_param
+logging:
+  level:
+    org.springframework.r2dbc.core: debug
+    org.springframework.r2dbc.connection.init.ScriptUtils: debug
+    dev.fastcampus: debug
