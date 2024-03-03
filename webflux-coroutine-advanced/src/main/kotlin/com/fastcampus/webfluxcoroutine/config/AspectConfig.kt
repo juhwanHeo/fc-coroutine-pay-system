@@ -17,9 +17,9 @@ private val logger = KotlinLogging.logger { }
 class AspectConfig {
     @Around("""
         @annotation(org.springframework.web.bind.annotation.RequestMapping) ||
-        @annotation(org.springframework.web.bind.annotation.GetMapping) ||
-        @annotation(org.springframework.web.bind.annotation.PostMapping) ||
-        @annotation(org.springframework.web.bind.annotation.PutMapping) ||
+        @annotation(org.springframework.web.bind.annotation.GetMapping)     ||
+        @annotation(org.springframework.web.bind.annotation.PostMapping)    ||
+        @annotation(org.springframework.web.bind.annotation.PutMapping)     ||
         @annotation(org.springframework.web.bind.annotation.DeleteMapping) 
     """)
     fun wrapController(jp: ProceedingJoinPoint): Any? {
