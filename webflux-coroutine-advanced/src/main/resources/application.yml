@@ -18,9 +18,11 @@ server:
     enabled: true
   port: 8080
   error:
+    include-exception: on
     include-message: always
-    include-exception: true
-    include-stacktrace: on_param
+    include-stacktrace: always
+    include-binding-errors: always
+
 logging:
   level:
     com.fastcampus: debug
