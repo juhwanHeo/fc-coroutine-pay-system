@@ -4,6 +4,10 @@ import io.github.resilience4j.circuitbreaker.CallNotPermittedException
 import io.github.resilience4j.circuitbreaker.CircuitBreaker
 import io.github.resilience4j.kotlin.circuitbreaker.CircuitBreakerConfig
 import io.github.resilience4j.kotlin.circuitbreaker.executeSuspendFunction
+import io.github.resilience4j.kotlin.ratelimiter.RateLimiterConfig
+import io.github.resilience4j.kotlin.ratelimiter.executeSuspendFunction
+import io.github.resilience4j.ratelimiter.RateLimiter
+import io.github.resilience4j.ratelimiter.RequestNotPermitted
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
@@ -38,14 +42,18 @@ class ExternalApi(
     ): String{
         logger.debug { "1. request call" }
         return try {
-            circuitBreaker.executeSuspendFunction {
-                logger.debug { "2. call external" }
-                client.get().uri("/test/circuit/child/${flag}")
-                    .retrieve()
-                    .awaitBody()
+            rateLimiter.executeSuspendFunction {
+                circuitBreaker.executeSuspendFunction {
+                    logger.debug { "2. call external" }
+                    client.get().uri("/test/circuit/child/${flag}")
+                        .retrieve()
+                        .awaitBody()
+                }
             }
         } catch (e: CallNotPermittedException) {
             "call later blocked by circuit breaker"
+        } catch (e: RequestNotPermitted) {
+            "call later blocked by rate limiter"
         } finally {
             logger.debug { "3. done" }
         }
@@ -65,9 +73,9 @@ class ExternalApi(
         permittedNumberOfCallsInHalfOpenState(3)
     })
 
-//    val rateLimiter = RateLimiter.of("rps-limiter", RateLimiterConfig {
-//        limitForPeriod(2)
-//        limitRefreshPeriod(10.seconds.toJavaDuration())
-//        timeoutDuration(5.seconds.toJavaDuration())
-//    })
+    val rateLimiter = RateLimiter.of("rps-limiter", RateLimiterConfig {
+        limitForPeriod(2)
+        limitRefreshPeriod(10.seconds.toJavaDuration())
+        timeoutDuration(5.seconds.toJavaDuration())
+    })
 }
