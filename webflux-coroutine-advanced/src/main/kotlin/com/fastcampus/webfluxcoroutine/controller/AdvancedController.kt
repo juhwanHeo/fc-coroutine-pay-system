@@ -1,6 +1,7 @@
 package com.fastcampus.webfluxcoroutine.controller
 
 import com.fastcampus.webfluxcoroutine.config.validator.DateString
+import com.fastcampus.webfluxcoroutine.exception.ExternalApi
 import com.fastcampus.webfluxcoroutine.service.AdvancedService
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Max
@@ -11,6 +12,7 @@ import jakarta.validation.constraints.Size
 import kotlinx.coroutines.delay
 import mu.KotlinLogging
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
@@ -20,6 +22,7 @@ private val logger = KotlinLogging.logger { }
 @RestController
 class AdvancedController(
     private val advancedService: AdvancedService,
+    private val externalApi: ExternalApi,
 ) {
 
     @GetMapping("/test/mdc")
@@ -41,6 +44,18 @@ class AdvancedController(
     ) {
         logger.debug { "/test/error request $reqErrorTest" }
 //        throw RuntimeException("runtime exception !!")
+    }
+
+    @GetMapping("/external/delay")
+    suspend fun delay() {
+        externalApi.delay()
+    }
+
+    @GetMapping("/external/circuit/{flag}", "/external/circuit", "/external/circuit/" )
+    suspend fun testCircuitBreaker(
+        @PathVariable flag: String
+    ): String {
+        return externalApi.testCircuitBreaker(flag)
     }
 }
 
