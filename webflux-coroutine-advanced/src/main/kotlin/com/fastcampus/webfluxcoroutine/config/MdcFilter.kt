@@ -1,5 +1,6 @@
 package com.fastcampus.webfluxcoroutine.config
 
+import com.fastcampus.webfluxcoroutine.config.extension.txid
 import io.micrometer.context.ContextRegistry
 import mu.KotlinLogging
 import org.slf4j.MDC

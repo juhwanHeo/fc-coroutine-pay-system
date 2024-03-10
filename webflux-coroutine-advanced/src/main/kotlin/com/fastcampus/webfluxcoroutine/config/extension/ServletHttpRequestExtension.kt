@@ -1,4 +1,4 @@
-package com.fastcampus.webfluxcoroutine.config
+package com.fastcampus.webfluxcoroutine.config.extension
 
 import org.springframework.http.server.reactive.ServerHttpRequest
 
