@@ -1,6 +1,7 @@
 package com.fastcampus.webfluxcoroutine.controller.article
 
 import com.fastcampus.webfluxcoroutine.controller.article.dto.ArticleCreateRequestDto
+import com.fastcampus.webfluxcoroutine.controller.article.dto.ArticleSearchReqDto
 import com.fastcampus.webfluxcoroutine.controller.article.dto.ArticleUpdateRequestDto
 import com.fastcampus.webfluxcoroutine.model.Article
 import com.fastcampus.webfluxcoroutine.service.ArticleService
@@ -29,6 +30,13 @@ class ArticleController(
         @RequestParam title: String?,
     ): Flow<Article> {
         return articleService.getAll(title)
+    }
+
+    @GetMapping("/all")
+    suspend fun getAll(
+        searchReqDto: ArticleSearchReqDto,
+    ): Flow<Article> {
+        return articleService.getAll(searchReqDto)
     }
 
     @GetMapping("/{articleId}")

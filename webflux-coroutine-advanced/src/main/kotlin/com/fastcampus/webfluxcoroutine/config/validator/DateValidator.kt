@@ -25,7 +25,7 @@ class DateValidator: ConstraintValidator<DateString, String> {
         val text = value?.filter { it.isDigit() } ?: return true
         val format = "yyyyMMdd"
         return runCatching {
-            text.toLocalDate(format).let {
+            text.toLocalDate().let {
                 if (text != it.toStringByFormat(format)) null else true
             }
         }.getOrNull() != null

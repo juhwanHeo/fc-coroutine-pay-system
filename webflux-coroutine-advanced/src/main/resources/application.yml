@@ -5,7 +5,7 @@ spring:
     ansi:
       enabled: always
   r2dbc:
-    url: r2dbc:pool:mariadb://localhost:23306/test
+    url: r2dbc:pool:mariadb://localhost:13306/test
     username: test
     password: test123
   sql:
