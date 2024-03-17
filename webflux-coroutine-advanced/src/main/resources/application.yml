@@ -12,6 +12,7 @@ spring:
     init:
       mode: always
       schema-locations: classpath:db-init/schema.sql
+      data-locations: classpath:db-init/test.sql
   data:
     redis:
       host: localhost
