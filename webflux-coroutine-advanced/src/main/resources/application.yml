@@ -12,6 +12,12 @@ spring:
     init:
       mode: always
       schema-locations: classpath:db-init/schema.sql
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+
 server:
   shutdown: graceful
   compression:
@@ -22,6 +28,7 @@ server:
     include-message: always
     include-stacktrace: always
     include-binding-errors: always
+
 
 logging:
   level:
