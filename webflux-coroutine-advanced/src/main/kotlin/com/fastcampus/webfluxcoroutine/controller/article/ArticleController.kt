@@ -36,7 +36,7 @@ class ArticleController(
     suspend fun getAll(
         searchReqDto: ArticleSearchReqDto,
     ): Flow<Article> {
-        return articleService.getAll(searchReqDto)
+        return articleService.getAllCached(searchReqDto)
     }
 
     @GetMapping("/{articleId}")
