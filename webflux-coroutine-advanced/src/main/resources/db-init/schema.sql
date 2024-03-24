@@ -3,6 +3,8 @@ CREATE TABLE IF NOT EXISTS TB_ARTICLE (
     title VARCHAR(255),
     body VARCHAR(2000),
     author_id BIGINT,
+    balance BIGINT,
+    version INT,
     created_at TIMESTAMP,
     updated_at TIMESTAMP
 );
