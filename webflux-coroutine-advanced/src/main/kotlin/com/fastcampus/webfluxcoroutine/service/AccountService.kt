@@ -22,7 +22,7 @@ class AccountService(
         id: Long,
         amount: Long
     ) {
-        accountRepository.findById(id)?.let { account ->
+        accountRepository.findArticleById(id)?.let { account ->
             delay(3000)
             account.balance += amount
             accountRepository.save(account)
