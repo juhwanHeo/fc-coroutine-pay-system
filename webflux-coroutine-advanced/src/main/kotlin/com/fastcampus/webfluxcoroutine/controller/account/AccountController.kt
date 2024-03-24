@@ -32,4 +32,13 @@ class AccountController(
         accountService.deposit(id, amount)
         return accountService.get(id)
     }
+
+    @PutMapping("/redis/{id}/{amount}")
+    suspend fun depositForRedis(
+        @PathVariable id: Long,
+        @PathVariable amount: Long,
+    ): AccountResponseDto {
+        accountService.depositForRedis(id, amount)
+        return accountService.get(id)
+    }
 }
