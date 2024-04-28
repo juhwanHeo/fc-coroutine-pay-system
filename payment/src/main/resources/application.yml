@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: payment
+  output:
+    ansi:
+      enabled: always
+  r2dbc:
+    url: r2dbc:pool:mariadb://localhost:13306/payment
+    username: test
+    password: test123
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+logging:
+  level:
+    com.fastcampus: debug
+    org.springframework.r2dbc.core: debug
+    org.springframework.r2dbc.connection.init.ScriptUtils: debug
+  pattern:
+    console: "%d{HH:mm:ss.SSS}|%highlight(%-5level)|%X{txid:-}|%green(%t)|%blue(\\(%F:%L\\))|%msg%n"
+
+server:
+  shutdown: graceful
+  port: 8080
+  error:
+    include-message: always
+    include-exception: true
+    include-stacktrace: always
+
+payment:
+  toss:
+    client-key: test_ck_QbgMGZzorzbWbaZR12EDrl5E1em4
+    secret-key: dGVzdF9za19aTEtHUHg0TTNNYnpFQUJLbmRYZFZCYVd5cHYxOg==
