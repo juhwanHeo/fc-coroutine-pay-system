@@ -38,3 +38,15 @@ payment:
   toss:
     client-key: test_ck_QbgMGZzorzbWbaZR12EDrl5E1em4
     secret-key: dGVzdF9za19aTEtHUHg0TTNNYnpFQUJLbmRYZFZCYVd5cHYxOg==
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+  r2dbc:
+    url: r2dbc:pool:h2:mem://localhost/payment
+  sql:
+    init:
+      mode: always
+      data-locations: ""
