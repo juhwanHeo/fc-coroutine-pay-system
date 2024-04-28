@@ -28,3 +28,8 @@ server:
     include-message: always
     include-exception: true
     include-stacktrace: always
+
+payment:
+  toss:
+    client-key: test_ck_QbgMGZzorzbWbaZR12EDrl5E1em4
+    secret-key: dGVzdF9za19aTEtHUHg0TTNNYnpFQUJLbmRYZFZCYVd5cHYxOg==
