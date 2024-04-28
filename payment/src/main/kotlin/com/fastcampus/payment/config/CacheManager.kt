@@ -14,7 +14,7 @@ class CacheManager(
 ) {
     private val ops = redisTemplate.opsForValue()
 
-    val TTL = HashMap<Any, Duration>()
+    val ttl = HashMap<Any, Duration>()
 
     suspend fun <T> get(key: CacheKey): T? {
         return ops.get(key).awaitSingleOrNull()?.let { it as T }
@@ -25,7 +25,7 @@ class CacheManager(
     }
 
     suspend fun set(key: CacheKey, value: Any) {
-        val ttl = TTL[key.group]?.toJavaDuration()
+        val ttl = ttl[key.group]?.toJavaDuration()
 
         if (ttl == null) {
             ops.set(key, value)
