@@ -1,19 +1,30 @@
 spring:
   application:
-    name: spring-coroutine-advanced
+    name: payment
   output:
     ansi:
       enabled: always
   r2dbc:
-    url: r2dbc:pool:mariadb://localhost:13306/test
+    url: r2dbc:pool:mariadb://localhost:13306/payment
     username: test
     password: test123
-#  sql:
-#    init:
-#      mode: always
-#      schema-locations: classpath:db-init/schema.sql
-#      data-locations: classpath:db-init/test.sql
   data:
     redis:
       host: localhost
       port: 6379
+
+logging:
+  level:
+    com.fastcampus: debug
+    org.springframework.r2dbc.core: debug
+    org.springframework.r2dbc.connection.init.ScriptUtils: debug
+  pattern:
+    console: "%d{HH:mm:ss.SSS}|%highlight(%-5level)|%X{txid:-}|%green(%t)|%blue(\\(%F:%L\\))|%msg%n"
+
+server:
+  shutdown: graceful
+  port: 8080
+  error:
+    include-message: always
+    include-exception: true
+    include-stacktrace: always
