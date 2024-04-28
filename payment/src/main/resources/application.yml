@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: spring-coroutine-advanced
+  output:
+    ansi:
+      enabled: always
+  r2dbc:
+    url: r2dbc:pool:mariadb://localhost:13306/test
+    username: test
+    password: test123
+#  sql:
+#    init:
+#      mode: always
+#      schema-locations: classpath:db-init/schema.sql
+#      data-locations: classpath:db-init/test.sql
+  data:
+    redis:
+      host: localhost
+      port: 6379
