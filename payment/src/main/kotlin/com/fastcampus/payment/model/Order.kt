@@ -10,7 +10,7 @@ import org.springframework.data.relational.core.mapping.Table
 class Order(
     @Id
     var id: Long = 0,
-    var userId: Long? = null,
+    var userId: Long,
     var description: String? = null,
     var amount: Long = 0,
     var pgOrderId: String? = null,
