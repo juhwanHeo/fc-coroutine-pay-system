@@ -1,0 +1,19 @@
+### create Order
+POST http://127.0.0.1:8080/order
+Content-Type: application/json
+
+{
+  "userId": 11,
+  "products": [
+    {
+      "prodId": 1,
+      "quantity": 3
+    }
+  ]
+}
+
+### get Order
+GET http://localhost:8080/order/1
+
+### get all Order
+GET http://localhost:8080/order/all/11
