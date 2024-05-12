@@ -17,6 +17,8 @@ spring:
     redis:
       host: localhost
       port: 6379
+  thymeleaf:
+    cache: off
 
 logging:
   level:
