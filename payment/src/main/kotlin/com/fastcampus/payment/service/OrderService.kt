@@ -69,4 +69,8 @@ class OrderService(
     suspend fun deleteById(orderId: Long) {
         orderRepository.deleteById(orderId)
     }
+    suspend fun getOrderByPgOrderId(pgOrderId: String): Order {
+        return orderRepository.findByPgOrderId(pgOrderId)
+            ?: throw OrderNotFound("Order not found by pgOrderId: $pgOrderId")
+    }
 }
