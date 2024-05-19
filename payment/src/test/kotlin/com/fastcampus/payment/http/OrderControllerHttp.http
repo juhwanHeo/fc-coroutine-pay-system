@@ -17,3 +17,6 @@ GET http://localhost:8080/order/1
 
 ### get all Order
 GET http://localhost:8080/order/all/11
+
+### order historiesa
+GET http://localhost:8080/order/history?userId=11
