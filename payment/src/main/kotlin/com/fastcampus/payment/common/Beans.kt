@@ -1,6 +1,7 @@
 package com.fastcampus.payment.common
 
 import com.fastcampus.payment.repository.PIORepository
+import com.fastcampus.payment.service.OrderService
 import com.fastcampus.payment.service.ProductService
 import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
@@ -20,6 +21,7 @@ class Beans: ApplicationContextAware {
 
         val beanProductInOrderRepository: PIORepository by lazy{ getBean(PIORepository::class) }
         val beanProductService: ProductService by lazy{ getBean(ProductService::class) }
+        val beanOrderService: OrderService by lazy{ getBean(OrderService::class) }
     }
 
     override fun setApplicationContext(applicationContext: ApplicationContext) {

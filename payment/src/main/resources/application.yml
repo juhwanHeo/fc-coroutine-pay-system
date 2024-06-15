@@ -17,6 +17,8 @@ spring:
     redis:
       host: localhost
       port: 6379
+  thymeleaf:
+    cache: off
 
 logging:
   level:
@@ -36,8 +38,12 @@ server:
 
 payment:
   toss:
+    domain: https://api.tosspayments.com
     client-key: test_ck_QbgMGZzorzbWbaZR12EDrl5E1em4
     secret-key: dGVzdF9za19aTEtHUHg0TTNNYnpFQUJLbmRYZFZCYVd5cHYxOg==
+    view-client-key: test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm
+    view-secret-key: dGVzdF9nc2tfZG9jc19PYVB6OEw1S2RtUVhrelJ6M3k0N0JNdzY6
+#    view-secret-key: test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6
 
 ---
 spring:
