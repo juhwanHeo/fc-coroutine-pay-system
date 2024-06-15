@@ -4,6 +4,7 @@ import com.fastcampus.payment.controller.view.dto.ReqPayFailed
 import com.fastcampus.payment.controller.view.dto.ReqPaySucceed
 import com.fastcampus.payment.model.toResOrder
 import com.fastcampus.payment.service.OrderService
+import com.fastcampus.payment.service.PaymentService
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable
 @Controller
 class ViewController(
     private val orderService: OrderService,
+    private val paymentService: PaymentService,
 ) {
 
     @GetMapping("/hello/{name}")
@@ -40,10 +42,10 @@ class ViewController(
     suspend fun successPay(
         request: ReqPaySucceed,
     ): String {
-        if (!orderService.authSucceed(request))
+        if (!paymentService.authSucceed(request))
             return "pay-fail.html"
 
-        orderService.capture(request)
+        paymentService.capture(request)
         return "pay-success.html"
     }
 
@@ -51,7 +53,7 @@ class ViewController(
     suspend fun failPay(
         request: ReqPayFailed,
     ): String {
-        orderService.authFailed(request)
+        paymentService.authFailed(request)
         return "pay-fail.html"
     }
 }
