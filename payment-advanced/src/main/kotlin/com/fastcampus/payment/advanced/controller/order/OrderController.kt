@@ -5,6 +5,7 @@ import com.fastcampus.payment.advanced.controller.order.dto.ReqCreateOrderDto
 import com.fastcampus.payment.advanced.controller.order.dto.ResOrder
 import com.fastcampus.payment.advanced.model.Order
 import com.fastcampus.payment.advanced.model.toResOrder
+import com.fastcampus.payment.advanced.service.CaptureMarker
 import com.fastcampus.payment.advanced.service.OrderHistoryService
 import com.fastcampus.payment.advanced.service.OrderService
 import com.fastcampus.payment.advanced.service.PaymentService
@@ -30,6 +31,7 @@ class OrderController(
     private val orderService: OrderService,
     private val orderHistoryService: OrderHistoryService,
     private val paymentService: PaymentService,
+    private val captureMarker: CaptureMarker,
 ) {
 
     @GetMapping("/{orderId}")
@@ -81,5 +83,10 @@ class OrderController(
         val temp = (2.0).pow(order.pgRetryCount).toInt() * 1000
         val delay = temp + (0 .. temp).random()
         return delay.milliseconds
+    }
+
+    @GetMapping("/capturing")
+    suspend fun getCapturingOrder(): List<Order> {
+        return captureMarker.getAll()
     }
 }
