@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.reactive.function.client.WebClientRequestException
 import org.springframework.web.reactive.function.client.WebClientResponseException
+import java.time.Duration
+import java.time.LocalDateTime
 
 private val logger = KotlinLogging.logger {}
 
@@ -123,6 +125,13 @@ class PaymentService(
                 paymentApi.recapture(order.id)
             }
         }
+    }
+
+    suspend fun recaptureOnBoot() {
+        val now = LocalDateTime.now()
+        captureMarker.getAll()
+            .filter { Duration.between(it.updatedAt!!, now).seconds >= 60 }
+            .forEach { order -> paymentApi.recapture(order.id) }
     }
 
     private fun Order.toReqPaySucceed(): ReqPaySucceed {
