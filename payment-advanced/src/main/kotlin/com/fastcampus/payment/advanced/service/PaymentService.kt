@@ -30,6 +30,7 @@ class PaymentService(
     private val orderService: OrderService,
     private val tossPayApi: TossPayApi,
     private val paymentApi: PaymentApi,
+    private val captureMarker: CaptureMarker,
     private val objectMapper: ObjectMapper,
 ) {
 
@@ -89,6 +90,8 @@ class PaymentService(
             throw InvalidOrderStatus("invalid order status (orderId: ${order.id}, status: ${order.pgStatus})")
 
         order.increaseRetryCount()
+
+        captureMarker.put(order.id)
         try {
             tossPayApi.confirm(order.toReqPaySucceed()).also { logger.debug { ">>> res: $it" } }
             order.pgStatus = CAPTURE_SUCCESS
@@ -115,8 +118,10 @@ class PaymentService(
                 throw e
         } finally {
             orderService.save(order)
-            if (order.pgStatus == CAPTURE_RETRY)
+            captureMarker.remove(order.id)
+            if (order.pgStatus == CAPTURE_RETRY) {
                 paymentApi.recapture(order.id)
+            }
         }
     }
 
