@@ -27,6 +27,7 @@ repositories {
 
 dependencies {
 	// https://velog.io/@kshired/MacOS-M1-Chip-Spring-Cloud-Gateway-%EC%97%90%EB%9F%AC-%ED%95%B4%EA%B2%B0%EB%B2%95
+	testImplementation("org.testcontainers:testcontainers:1.19.0")
 	implementation("io.netty:netty-resolver-dns-native-macos:4.1.68.Final:osx-aarch_64")
 
 	implementation("au.com.console:kassava:2.1.0")

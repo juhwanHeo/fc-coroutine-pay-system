@@ -1,5 +1,6 @@
 package com.fastcampus.payment.advanced.service
 
+import com.fastcampus.payment.advanced.config.container.WithRedisContainer
 import com.fastcampus.payment.advanced.controller.order.dto.ReqCreateOrderDto
 import com.fastcampus.payment.advanced.controller.order.dto.ReqProdQuantity
 import com.fastcampus.payment.advanced.controller.view.dto.ReqPaySucceed
@@ -31,9 +32,9 @@ class OrderServiceTest(
     @Autowired private val productRepository: ProductRepository,
     @Autowired private val productInOrderRepository: PIORepository,
     @Autowired private val tossPayApi: TossPayApi,
-) : StringSpec({
+) : WithRedisContainer, StringSpec({
 
-    beforeTest {
+    beforeSpec {
         val products = listOf(
             Product(1, "apple", 1000).apply { new = true },
             Product(2, "banana", 1200).apply { new = true },
@@ -45,10 +46,6 @@ class OrderServiceTest(
         productRepository.save(products[1])
         productRepository.save(products[2])
         productRepository.save(products[3])
-    }
-
-    afterTest {
-        productRepository.deleteAll()
     }
 
     "create order on fail" {
