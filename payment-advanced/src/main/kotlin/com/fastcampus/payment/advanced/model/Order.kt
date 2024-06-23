@@ -7,6 +7,7 @@ import com.fastcampus.payment.advanced.common.Beans.Companion.beanProductInOrder
 import com.fastcampus.payment.advanced.common.Beans.Companion.beanProductService
 import com.fastcampus.payment.advanced.controller.order.dto.ResOrder
 import com.fastcampus.payment.advanced.controller.order.dto.ResProductQuantity
+import com.fastcampus.payment.advanced.model.PgStatus.CAPTURE_RETRY
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 
@@ -41,6 +42,10 @@ class Order(
         Order::pgStatus,
         Order::pgRetryCount,
     ), superToString = { super.toString() })
+
+    fun increaseRetryCount() {
+        if (this.pgStatus == CAPTURE_RETRY) this.pgRetryCount ++
+    }
 }
 
 suspend fun Order.toResOrder(): ResOrder {

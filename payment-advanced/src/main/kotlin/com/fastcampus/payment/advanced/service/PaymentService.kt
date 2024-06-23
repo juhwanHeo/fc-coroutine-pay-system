@@ -3,8 +3,20 @@ package com.fastcampus.payment.advanced.service
 import com.fastcampus.payment.advanced.common.Beans.Companion.beanOrderService
 import com.fastcampus.payment.advanced.controller.view.dto.ReqPayFailed
 import com.fastcampus.payment.advanced.controller.view.dto.ReqPaySucceed
-import com.fastcampus.payment.advanced.model.PgStatus
+import com.fastcampus.payment.advanced.controller.view.dto.TossPaymentType
+import com.fastcampus.payment.advanced.exception.InvalidOrderStatus
+import com.fastcampus.payment.advanced.model.Order
+import com.fastcampus.payment.advanced.model.PgStatus.AUTH_FAIL
+import com.fastcampus.payment.advanced.model.PgStatus.AUTH_INVALID
+import com.fastcampus.payment.advanced.model.PgStatus.AUTH_SUCCESS
+import com.fastcampus.payment.advanced.model.PgStatus.CAPTURE_FAIL
+import com.fastcampus.payment.advanced.model.PgStatus.CAPTURE_REQUEST
+import com.fastcampus.payment.advanced.model.PgStatus.CAPTURE_RETRY
+import com.fastcampus.payment.advanced.model.PgStatus.CAPTURE_SUCCESS
+import com.fastcampus.payment.advanced.model.PgStatus.CREATE
+import com.fastcampus.payment.advanced.service.api.PaymentApi
 import com.fastcampus.payment.advanced.service.api.TossPayApi
+import com.fasterxml.jackson.databind.ObjectMapper
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -17,6 +29,8 @@ private val logger = KotlinLogging.logger {}
 class PaymentService(
     private val orderService: OrderService,
     private val tossPayApi: TossPayApi,
+    private val paymentApi: PaymentApi,
+    private val objectMapper: ObjectMapper,
 ) {
 
     @Transactional
@@ -24,13 +38,13 @@ class PaymentService(
         logger.debug { "authSucceed request: $request" }
         val order = orderService.getOrderByPgOrderId(request.orderId).apply {
             pgKey = request.paymentKey
-            pgStatus = PgStatus.AUTH_SUCCESS
+            pgStatus = AUTH_SUCCESS
         }
 
         try {
             // 사용자가 악의 적으로 금액을 다르게 수정 후 요청 했을 경우를 validation 하는 과정
             if (order.amount != request.amount) {
-                order.pgStatus = PgStatus.AUTH_INVALID
+                order.pgStatus = AUTH_INVALID
                 logger.error { "Invalid auth because of amount (order: ${order.amount}, pay: ${request.amount})" }
                 return false
             }
@@ -44,8 +58,8 @@ class PaymentService(
     suspend fun authFailed(request: ReqPayFailed) {
         val order = orderService.getOrderByPgOrderId(request.orderId)
 
-        if (order.pgStatus == PgStatus.CREATE) {
-            order.pgStatus = PgStatus.AUTH_FAIL
+        if (order.pgStatus == CREATE) {
+            order.pgStatus = AUTH_FAIL
             orderService.save(order)
         }
         logger.error { """
@@ -57,28 +71,73 @@ class PaymentService(
     }
 
     @Transactional
-    suspend fun capture(request: ReqPaySucceed): Boolean {
+    suspend fun capture(request: ReqPaySucceed) {
         logger.debug { "capture request: $request" }
         val order = orderService.getOrderByPgOrderId(request.orderId).apply {
-            pgStatus = PgStatus.CAPTURE_REQUEST
+            pgStatus = CAPTURE_REQUEST
             beanOrderService.save(this)
         }
+        capture(order)
+    }
 
+    @Transactional
+    suspend fun capture(order: Order) {
         logger.debug { ">>> order: $order" }
-        return try {
-            tossPayApi.confirm(request).also { logger.debug { ">>> res: $it" } }
-            order.pgStatus = PgStatus.CAPTURE_SUCCESS
-            true
+
+        // capture, retry 상태인 Order 만 capture 진행
+        if (order.pgStatus !in setOf(CAPTURE_REQUEST, CAPTURE_RETRY))
+            throw InvalidOrderStatus("invalid order status (orderId: ${order.id}, status: ${order.pgStatus})")
+
+        order.increaseRetryCount()
+        try {
+            tossPayApi.confirm(order.toReqPaySucceed()).also { logger.debug { ">>> res: $it" } }
+            order.pgStatus = CAPTURE_SUCCESS
         } catch (e: Exception) {
             logger.error(e.message, e)
             order.pgStatus = when (e) {
-                is WebClientRequestException -> PgStatus.CAPTURE_RETRY
-                is WebClientResponseException -> PgStatus.CAPTURE_FAIL
-                else -> PgStatus.CAPTURE_FAIL
+                is WebClientRequestException -> CAPTURE_RETRY
+                is WebClientResponseException -> {
+                    val tossApiError = e.toTossPayApiError()
+                    logger.debug { ">> toss api error: $tossApiError" }
+
+                    when (tossApiError.code) {
+                        "ALREADY_PROCESSED_PAYMENT" -> CAPTURE_SUCCESS
+                        "PROVIDER_ERROR", "FAILED_INTERNAL_SYSTEM_PROCESSING" -> CAPTURE_RETRY
+                        else -> CAPTURE_FAIL
+                    }
+                }
+                else -> CAPTURE_FAIL
             }
-            false
+
+            if (order.pgStatus == CAPTURE_RETRY && order.pgRetryCount >= 3)
+                order.pgStatus = CAPTURE_FAIL
+            if (order.pgStatus != CAPTURE_SUCCESS)
+                throw e
         } finally {
             orderService.save(order)
+            if (order.pgStatus == CAPTURE_RETRY)
+                paymentApi.recapture(order.id)
         }
     }
+
+    private fun Order.toReqPaySucceed(): ReqPaySucceed {
+        return this.let {
+            ReqPaySucceed(
+                paymentKey = it.pgKey!!,
+                orderId = it.pgOrderId!!,
+                amount = it.amount,
+                paymentType = TossPaymentType.NORMAL,
+            )
+        }
+    }
+
+    private fun WebClientResponseException.toTossPayApiError(): TossPayApiError {
+        val json = String(this.responseBodyAsByteArray)
+        return objectMapper.readValue(json, TossPayApiError::class.java)
+    }
 }
+
+data class TossPayApiError(
+    val code: String,
+    val message: String,
+)

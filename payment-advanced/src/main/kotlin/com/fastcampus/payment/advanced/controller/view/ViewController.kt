@@ -45,8 +45,12 @@ class ViewController(
         if (!paymentService.authSucceed(request))
             return "pay-fail.html"
 
-        paymentService.capture(request)
-        return "pay-success.html"
+        return try {
+            paymentService.capture(request)
+            "pay-success.html"
+        } catch (e: Exception) {
+            "pay-fail.html"
+        }
     }
 
     @GetMapping("/pay/fail")
