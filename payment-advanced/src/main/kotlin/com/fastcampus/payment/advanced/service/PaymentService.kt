@@ -4,6 +4,7 @@ import com.fastcampus.payment.advanced.common.Beans.Companion.beanOrderService
 import com.fastcampus.payment.advanced.controller.view.dto.ReqPayFailed
 import com.fastcampus.payment.advanced.controller.view.dto.ReqPaySucceed
 import com.fastcampus.payment.advanced.model.PgStatus
+import com.fastcampus.payment.advanced.service.api.TossPayApi
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

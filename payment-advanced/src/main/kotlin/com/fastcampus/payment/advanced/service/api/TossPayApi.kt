@@ -1,4 +1,4 @@
-package com.fastcampus.payment.advanced.service
+package com.fastcampus.payment.advanced.service.api
 
 import com.fastcampus.payment.advanced.controller.view.dto.ReqPaySucceed
 import io.netty.handler.ssl.SslContextBuilder

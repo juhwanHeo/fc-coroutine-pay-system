@@ -1,6 +1,6 @@
 package com.fastcampus.payment.advanced.config
 
-import com.fastcampus.payment.advanced.service.TossPayApi
+import com.fastcampus.payment.advanced.service.api.TossPayApi
 import org.mockito.Mockito
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

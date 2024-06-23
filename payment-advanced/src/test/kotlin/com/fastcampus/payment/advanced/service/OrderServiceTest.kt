@@ -10,6 +10,8 @@ import com.fastcampus.payment.advanced.model.PgStatus
 import com.fastcampus.payment.advanced.model.Product
 import com.fastcampus.payment.advanced.repository.PIORepository
 import com.fastcampus.payment.advanced.repository.ProductRepository
+import com.fastcampus.payment.advanced.service.api.ResConfirm
+import com.fastcampus.payment.advanced.service.api.TossPayApi
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
