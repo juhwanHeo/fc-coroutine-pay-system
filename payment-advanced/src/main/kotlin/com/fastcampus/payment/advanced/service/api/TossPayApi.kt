@@ -1,6 +1,7 @@
 package com.fastcampus.payment.advanced.service.api
 
 import com.fastcampus.payment.advanced.controller.view.dto.ReqPaySucceed
+import io.netty.channel.ChannelOption
 import io.netty.handler.ssl.SslContextBuilder
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -29,7 +30,11 @@ class TossPayApi(
             .maxConnections(10)
             .pendingAcquireTimeout(Duration.ofSeconds(10))
             .build()
-        val connector = ReactorClientHttpConnector(HttpClient.create(provider).secure{ it.sslContext((insecureSslContext))})
+        val connector = ReactorClientHttpConnector(
+            HttpClient.create(provider)
+                .secure{ it.sslContext((insecureSslContext))}
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 1_000)
+        )
 
         return WebClient.builder().baseUrl(domain)
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
